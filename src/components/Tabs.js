@@ -2,8 +2,9 @@ import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useSafeAreaInsets  } from 'react-native-safe-area-context';
 
-import AboutScreen from './AboutScreen'
-import HomeScreen from './HomeScreen'
+import PomodoroScreen from './Pomodoro'
+import CalendarScreen from './Calendar'
+import TargetScreen from './Target'
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -16,8 +17,9 @@ export default function Tabs() {
       tabBarLabelStyle: { fontSize: 12 },
       tabBarStyle: { marginTop: insets.top },
     }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="About" component={AboutScreen} />
+      <Tab.Screen name="Calendar" component={CalendarScreen} />
+      <Tab.Screen name="Pomodoro" component={PomodoroScreen} />
+      <Tab.Screen name="Target" component={TargetScreen} />
     </Tab.Navigator>
   );
 }
