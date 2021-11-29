@@ -3,6 +3,8 @@ import { Text, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
 
+import CircularProgress from './CircularProgress';
+
 export default function Pomodoro() {
 
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
@@ -38,6 +40,7 @@ export default function Pomodoro() {
 
   return (
     <SafeAreaView  style={ styles.position } >
+      <CircularProgress/>
       <Text style={ styles.banner }>Pomodoro Screen</Text>
       <Text>{formatTime(secondsLeft)}</Text>
       <Button onPress={startTimer} title="Start"/>
