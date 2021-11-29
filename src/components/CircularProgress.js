@@ -16,7 +16,7 @@ export default function CircularProgress() {
   const progress = useSharedValue(0);
 
   const startAnimation = useCallback(() => {
-    progress.value = withTiming(progress.value > 0 ? 0 : 1, { duration: 3000 });
+    progress.value = withTiming(progress.value > 0 ? 0 : 1, { duration: 1 * 60 * 1000 });
   })
 
   const animatedProps = useAnimatedProps(() => {
