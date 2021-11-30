@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Text, Button, Dimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
-import Animated, { useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -15,16 +15,22 @@ const circumference = 2 * Math.PI * radius;
 
 export default function Pomodoro() {
 
-  const pomodoroPeriodInSeconds = 25 * 60;
+  const pomodoroPeriodInSeconds = 10;
   const [secondsLeft, setSecondsLeft] = useState(pomodoroPeriodInSeconds);
   const [timer, setTimer] = useState();
   const [isRunning, setIsRunning] = useState(false);
+  const [pomodoroButtonText, setPMButtonText] = useState("Start");
+
+  const secondsLeftRef = useRef(secondsLeft);
 
   const startTimer = () => {
     const newTimer = setInterval(() => {
-      setSecondsLeft((secondsLeft) => secondsLeft - 1);
-      if (secondsLeft === 0) {
+      secondsLeftRef.current--;
+      console.log(`Timer tick: ${secondsLeftRef.current}`);
+      setSecondsLeft(secondsLeftRef.current);
+      if (secondsLeftRef.current === 0) {
         clearInterval(newTimer);
+        cleanUpAfterPeriod();
       }
     }, 1000);
     setTimer(newTimer);
@@ -34,10 +40,26 @@ export default function Pomodoro() {
     clearInterval(timer);
   }
 
+  const cleanUpAfterPeriod = () => {
+    setSecondsLeft(pomodoroPeriodInSeconds);
+    secondsLeftRef.current = pomodoroPeriodInSeconds;
+    setPMButtonText("Start");
+    setIsRunning(false);
+    progress.value = 0;
+  }
+
   const togglePomodoroTimer = () => {
     setIsRunning(!isRunning);
-    if (!isRunning) startTimer();
-    else stopTimer();
+    if (!isRunning) {
+      startTimer();
+      startAnimation();
+      setPMButtonText("Pause");
+    }
+    else {
+      stopTimer();
+      cancelAnimation(progress);
+      setPMButtonText("Start");
+    }
     console.log("Clicked on pomodoro start: is the timer running: " + isRunning);
   };
 
@@ -52,8 +74,8 @@ export default function Pomodoro() {
   const progress = useSharedValue(0);
 
   const startAnimation = useCallback(() => {
-    progress.value = withTiming(progress.value > 0 ? 0 : 1, 
-      { duration: pomodoroPeriodInSeconds * 1000 }
+    progress.value = withTiming(1, 
+      { duration: secondsLeft * 1000 }
     );
   })
 
@@ -86,8 +108,8 @@ export default function Pomodoro() {
         </Svg>
       </View>
       <Text style={ styles.banner }>Pomodoro Screen</Text>
-      <Text>{formatTime(secondsLeft)}</Text>
-      <Button onPress={togglePomodoroTimer} title="Start"/>
+      <Text>{formatTime(secondsLeftRef.current)}</Text>
+      <Button onPress={togglePomodoroTimer} title={pomodoroButtonText}/>
     </SafeAreaView >
   );
 }
