@@ -1,39 +1,31 @@
 import React, { useState } from 'react';
-import { Text, Button, View, TextInput, StyleSheet  } from 'react-native';
+import { Text, View, TextInput, StyleSheet  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-
-
-
+import { Calendar } from 'react-native-calendars';
 
 export default function CalendarScreen() {
 
   const [daysMarked, setDaysMarked] = useState();
 
   return (
-    <SafeAreaView >
+    <SafeAreaView>
       <Calendar
         onDayPress={(day) => {
-          console.log('selected day', day.dateString)
-          const selectedDay = {...daysMarked, ...{[day.dateString]: {selected: true, selectedColor: '#FE724C'}}}
-          setDaysMarked(selectedDay)
+          console.log('selected day', day.dateString);
+          const selectedDay = {
+            [day.dateString]: {selected: true, selectedColor: '#FE724C'}
+          }
+          setDaysMarked({...daysMarked, ...selectedDay});
           console.log(daysMarked);
         }}
-        markedDates={
-          daysMarked
-        }
-      ></Calendar>
-
-    <View>
-      <Text>ToDo List</Text>
-      <TextInput
-        style={styles.input}
+        markedDates={daysMarked}
       />
-
-      <Text>Target</Text>
-
-    </View>
-    </SafeAreaView >
+      <View>
+        <Text>ToDo List</Text>
+        <TextInput style={styles.input} />
+        <Text>Target</Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
