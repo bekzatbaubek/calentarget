@@ -8,7 +8,7 @@ export default function CalendarScreen() {
   const [daysMarked, setDaysMarked] = useState();
 
   return (
-    <SafeAreaView>
+    <View>
       <Calendar
         onDayPress={(day) => {
           console.log('selected day', day.dateString);
@@ -25,7 +25,7 @@ export default function CalendarScreen() {
         <TextInput style={styles.input} />
         <Text>Target</Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

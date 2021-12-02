@@ -28,21 +28,6 @@ const singleTarget = (target) => {
   </View>
 }
 
-const stubTargets = [
-  {
-    title: "University",
-    pending: 3
-  },
-  {
-    title: "Personal",
-    pending: 4
-  },
-  {
-    title: "Whatever",
-    pending: 5
-  },
-]
-
 export default function Target() {
 
   React.useEffect(() => {
@@ -53,7 +38,7 @@ export default function Target() {
     });
   }, []);
 
-  const [targets, setTargets] = useState(stubTargets);
+  const [targets, setTargets] = useState([]);
   const [newTargetText, setNewTargetText] = useState("");
   const [newTargetNumber, setNewTargetNumber] = useState(1);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
@@ -108,24 +93,22 @@ export default function Target() {
   }
 
   return (
-    <SafeAreaView  style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View>
       <FlatList
         data={targets}
-        renderItem={({item}) =>
-          singleTarget(item)
-        }
+        renderItem={({item}) => singleTarget(item)}
         keyExtractor={(item, index) => index}
       />
       <TextInput
         onChangeText={(text) => setNewTargetText(text)}
         style={{ borderWidth: 1, width: 100 }}/>
       <Button
-        onPress={() => addNewTargetToDB(newTargetText, 3)}
+        onPress={() => addNewTargetToDB(newTargetText, newTargetNumber)}
         title="Add a target"/>
       <Button
         onPress={() => dropTable()}
         title="Clean DB"/>
-    </SafeAreaView >
+    </View>
   );
 }
 
