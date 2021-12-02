@@ -24,22 +24,22 @@ const db = openDatabase();
 const singleTarget = (target) => {
   return <View>
     <Text>{target.title}</Text>
-    <Text>{"🎓".repeat(target.numberOfTargets)}</Text>
+    <Text>{"🎓".repeat(target.pending)}</Text>
   </View>
 }
 
 const stubTargets = [
   {
     title: "University",
-    numberOfTargets: 3
+    pending: 3
   },
   {
     title: "Personal",
-    numberOfTargets: 4
+    pending: 4
   },
   {
     title: "Whatever",
-    numberOfTargets: 5
+    pending: 5
   },
 ]
 
@@ -58,15 +58,28 @@ export default function Target() {
   const [newTargetNumber, setNewTargetNumber] = useState(1);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
 
-  const addNewTargetToDB = (newTargetText) => {
+  const updateTargetsFromDB = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `select * from targets;`,
+        [],
+        (_, { rows: { _array } }) => setTargets(_array)
+      );
+    });
+  }
+
+  const addNewTargetToDB = (newTargetText, newTargetPending) => {
     if (newTargetText === "" || newTargetText === null) {
+      return false;
+    }
+    if (newTargetPending === undefined || newTargetPending === null) {
       return false;
     }
     console.log(`Adding ${newTargetText} to the database`);
 
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into targets (title, pending, completed) values (?, 1, 0)", [newTargetText]);
+        tx.executeSql("insert into targets (title, pending, completed) values (?, ?, 0)", [newTargetText, newTargetPending]);
         tx.executeSql("select * from targets", [], (_, { rows }) =>
           console.log(JSON.stringify(rows))
         );
@@ -74,6 +87,8 @@ export default function Target() {
       null,
       forceUpdate
     );
+
+    updateTargetsFromDB();
   }
 
   const dropTable = () => {
@@ -89,6 +104,7 @@ export default function Target() {
       null,
       forceUpdate
     );
+    updateTargetsFromDB();
   }
 
   return (
@@ -104,7 +120,7 @@ export default function Target() {
         onChangeText={(text) => setNewTargetText(text)}
         style={{ borderWidth: 1, width: 100 }}/>
       <Button
-        onPress={() => addNewTargetToDB(newTargetText)}
+        onPress={() => addNewTargetToDB(newTargetText, 3)}
         title="Add a target"/>
       <Button
         onPress={() => dropTable()}
