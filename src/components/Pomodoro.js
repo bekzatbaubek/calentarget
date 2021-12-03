@@ -84,7 +84,7 @@ export default function Pomodoro() {
   });
 
   return (
-    <SafeAreaView  style={ styles.position } >
+    <View style={ styles.position } >
       <View>
         <Svg width={size} height={size}>
           <Circle
@@ -110,7 +110,7 @@ export default function Pomodoro() {
       <Text style={ styles.banner }>Pomodoro Screen</Text>
       <Text>{formatTime(secondsLeftRef.current)}</Text>
       <Button onPress={togglePomodoroTimer} title={pomodoroButtonText}/>
-    </SafeAreaView >
+    </View>
   );
 }
 
