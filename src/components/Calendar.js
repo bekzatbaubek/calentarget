@@ -9,42 +9,40 @@ export default function CalendarScreen() {
   const [daysMarked, setDaysMarked] = useState();
 
   return (
-    <SafeAreaView style={styles.overallBackground}>
-      <ScrollView>
-        <Calendar
-          onDayPress={(day) => {
-            console.log('selected day', day.dateString);
-            const selectedDay = {
-              [day.dateString]: {selected: true, selectedColor: '#FE724C'}
-            }
-            setDaysMarked({...daysMarked, ...selectedDay});
-            console.log(daysMarked);
-          }}
-          markedDates={daysMarked}
+    <ScrollView style={styles.overallBackground}>
+      <Calendar
+        onDayPress={(day) => {
+          console.log('selected day', day.dateString);
+          const selectedDay = {
+            [day.dateString]: {selected: true, selectedColor: '#FE724C'}
+          }
+          setDaysMarked({...daysMarked, ...selectedDay});
+          console.log(daysMarked);
+        }}
+        markedDates={daysMarked}
 
-          theme={{
-            arrowColor: '#FE724C',
-            monthTextColor: '#323643',
-            textDayFontFamily: 'SofiaProRegular',
-            textMonthFontFamily: 'SofiaProMedium',
-            textMonthFontWeight: '600',
-          }}
+        theme={{
+          arrowColor: '#FE724C',
+          monthTextColor: '#323643',
+          textDayFontFamily: 'SofiaProRegular',
+          textMonthFontFamily: 'SofiaProMedium',
+          textMonthFontWeight: '600',
+        }}
 
-          style={styles.calendarStyle}
-        />
-        <View>
-          <Text style={styles.titleStyle}>ToDo List</Text>
-          <View style={styles.boxWrap}>
-            <TextInput style={styles.input} />
-          </View>
-
-          <Text style={styles.titleStyle}>Target</Text>
-          <View style={styles.boxWrap}>
-            <TextInput style={styles.input} />
-          </View>
+        style={styles.calendarStyle}
+      />
+      <View>
+        <Text style={styles.titleStyle}>ToDo List</Text>
+        <View style={styles.boxWrap}>
+          <TextInput style={styles.input} />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <Text style={styles.titleStyle}>Target</Text>
+        <View style={styles.boxWrap}>
+          <TextInput style={styles.input} />
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -103,9 +101,10 @@ const styles = StyleSheet.create({
     marginLeft: 32,
     fontWeight: "600",
     fontSize: 28,
+    fontFamily: 'SofiaProSemiBold',
     marginBottom: 20,
+  },
+  font: {
+    fontFamily: 'SofiaProMedium',
   }
-  // font: {
-  //   fontFamily: 'SofiaProMedium',
-  // }
 });

@@ -15,7 +15,7 @@ export default function Tabs() {
   return (
     <Tab.Navigator
     screenOptions={{
-      tabBarLabelStyle: { fontSize: 12 },
+      tabBarLabelStyle: { fontSize: 14, fontFamily: 'SofiaProRegular' },
       tabBarStyle: { marginTop: insets.top },
     }} >
       <Tab.Screen name="Calendar" component={CalendarScreen} />

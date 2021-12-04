@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, Text, Button, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList, Text, Button, TextInput, View, ScrollView } from 'react-native';
 
 import * as SQLite from "expo-sqlite";
 
@@ -23,8 +22,8 @@ const db = openDatabase();
 
 const singleTarget = (target) => {
   return <View>
-    <Text>{target.title}</Text>
-    <Text>{"🎓".repeat(target.pending)}</Text>
+    <Text style={{ fontFamily: 'SofiaProRegular', fontSize: 32 }}>{target.title}</Text>
+    <Text style={{ fontSize: 32 }}>{"🎓".repeat(target.pending)}</Text>
   </View>
 }
 
@@ -93,7 +92,7 @@ export default function Target() {
   }
 
   return (
-    <View>
+    <ScrollView>
       <FlatList
         data={targets}
         renderItem={({item}) => singleTarget(item)}
@@ -108,7 +107,7 @@ export default function Target() {
       <Button
         onPress={() => dropTable()}
         title="Clean DB"/>
-    </View>
+    </ScrollView>
   );
 }
 

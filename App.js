@@ -3,9 +3,21 @@ import React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import Tabs from './src/components/Tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
 
 
 export default function App() {
+
+  const [loaded] = useFonts({
+    SofiaProRegular: require('./assets/fonts/SofiaProRegular.ttf'),
+    SofiaProMedium: require('./assets/fonts/SofiaProMedium.ttf'),
+    SofiaProSemiBold: require('./assets/fonts/SofiaProSemiBold.ttf'),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <NavigationContainer theme={MyTheme}>
