@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Button, TextInput, View, ScrollView } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 import * as SQLite from "expo-sqlite";
 
@@ -29,7 +30,7 @@ const singleTarget = (target, index) => {
 
 export default function Target() {
 
-  React.useEffect(() => {
+  useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
         "create table if not exists targets (id integer primary key not null, title text, pending int, completed int);"
@@ -41,6 +42,13 @@ export default function Target() {
   const [newTargetText, setNewTargetText] = useState("");
   const [newTargetNumber, setNewTargetNumber] = useState(3);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (isFocused) {
+      updateTargetsFromDB();
+    }
+  })
 
   const updateTargetsFromDB = () => {
     db.transaction((tx) => {
