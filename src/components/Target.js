@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, Text, Button, TextInput, View, ScrollView } from 'react-native';
+import { Text, Button, TextInput, View, ScrollView } from 'react-native';
 
 import * as SQLite from "expo-sqlite";
 
@@ -20,8 +20,8 @@ function openDatabase() {
 
 const db = openDatabase();
 
-const singleTarget = (target) => {
-  return <View>
+const singleTarget = (target, index) => {
+  return <View key={index}>
     <Text style={{ fontFamily: 'SofiaProRegular', fontSize: 32 }}>{target.title}</Text>
     <Text style={{ fontSize: 32 }}>{"🎓".repeat(target.pending)}</Text>
   </View>
@@ -39,7 +39,7 @@ export default function Target() {
 
   const [targets, setTargets] = useState([]);
   const [newTargetText, setNewTargetText] = useState("");
-  const [newTargetNumber, setNewTargetNumber] = useState(1);
+  const [newTargetNumber, setNewTargetNumber] = useState(3);
   const [forceUpdate, forceUpdateId] = useForceUpdate();
 
   const updateTargetsFromDB = () => {
@@ -93,11 +93,7 @@ export default function Target() {
 
   return (
     <ScrollView>
-      <FlatList
-        data={targets}
-        renderItem={({item}) => singleTarget(item)}
-        keyExtractor={(item, index) => index}
-      />
+      {targets.map((target, index) => singleTarget(target, index))}
       <TextInput
         onChangeText={(text) => setNewTargetText(text)}
         style={{ borderWidth: 1, width: 100 }}/>

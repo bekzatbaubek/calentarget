@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View, TextInput, StyleSheet, ScrollView  } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
-import { setStatusBarBackgroundColor } from 'expo-status-bar';
 
 export default function CalendarScreen() {
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useSafeAreaInsets  } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
 
 import PomodoroScreen from './Pomodoro'
 import CalendarScreen from './Calendar'
@@ -24,8 +23,3 @@ export default function Tabs() {
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  
-  
-})
