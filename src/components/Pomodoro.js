@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Text, Button, Dimensions, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
+import { TargetsContext } from '../contexts/TargetsContext'
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -12,8 +13,16 @@ const strokeWidth = 50;
 const radius = (size - strokeWidth) / 2;
 const circumference = 2 * Math.PI * radius;
 
+const singleTarget = (target, index) => {
+  return <View key={index}>
+    <Text style={{ fontFamily: 'SofiaProRegular', fontSize: 32 }}>{target.title}</Text>
+    <Text style={{ fontSize: 32 }}>{"🎓".repeat(target.pending)}</Text>
+  </View>
+}
+
 export default function Pomodoro() {
 
+  const { targets } = useContext(TargetsContext);
   const pomodoroPeriodInSeconds = 10;
   const [secondsLeft, setSecondsLeft] = useState(pomodoroPeriodInSeconds);
   const [timer, setTimer] = useState();
@@ -109,6 +118,7 @@ export default function Pomodoro() {
       <Text style={ styles.banner }>Pomodoro Screen</Text>
       <Text>{formatTime(secondsLeftRef.current)}</Text>
       <Button onPress={togglePomodoroTimer} title={pomodoroButtonText}/>
+      {targets.map((target, index) => singleTarget(target, index))}
     </View>
   );
 }

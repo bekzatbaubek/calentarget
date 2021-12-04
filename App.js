@@ -4,9 +4,12 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import Tabs from './src/components/Tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
-
+import useDatabase from './src/hooks/useDatabase';
+import { TargetsContextProvider } from './src/contexts/TargetsContext';
 
 export default function App() {
+
+  const isDBLoadingComplete = useDatabase();
 
   const [loaded] = useFonts({
     SofiaProRegular: require('./assets/fonts/SofiaProRegular.ttf'),
@@ -14,16 +17,18 @@ export default function App() {
     SofiaProSemiBold: require('./assets/fonts/SofiaProSemiBold.ttf'),
   });
 
-  if (!loaded) {
+  if (!loaded || !isDBLoadingComplete) {
     return null;
   }
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={MyTheme}>
-        <Tabs />
-      </NavigationContainer>
-      <StatusBar/>
+      <TargetsContextProvider>
+        <NavigationContainer theme={MyTheme}>
+          <Tabs />
+        </NavigationContainer>
+        <StatusBar/>
+      </TargetsContextProvider>
     </SafeAreaProvider>
   );
 }

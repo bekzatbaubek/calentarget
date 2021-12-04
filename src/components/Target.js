@@ -1,25 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { Text, Button, TextInput, View, ScrollView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
-
-import * as SQLite from "expo-sqlite";
-
-function openDatabase() {
-  if (Platform.OS === "web") {
-    return {
-      transaction: () => {
-        return {
-          executeSql: () => {},
-        };
-      },
-    };
-  }
-
-  const db = SQLite.openDatabase("db.db");
-  return db;
-}
-
-const db = openDatabase();
+import { TargetsContext } from '../contexts/TargetsContext'
 
 const singleTarget = (target, index) => {
   return <View key={index}>
@@ -30,73 +11,15 @@ const singleTarget = (target, index) => {
 
 export default function Target() {
 
-  useEffect(() => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "create table if not exists targets (id integer primary key not null, title text, pending int, completed int);"
-      );
-    });
-  }, []);
-
-  const [targets, setTargets] = useState([]);
+  const { targets, addNewTarget } = useContext(TargetsContext);
   const [newTargetText, setNewTargetText] = useState("");
   const [newTargetNumber, setNewTargetNumber] = useState(3);
-  const [forceUpdate, forceUpdateId] = useForceUpdate();
-  const isFocused = useIsFocused();
 
-  useEffect(() => {
-    if (isFocused) {
-      updateTargetsFromDB();
-    }
-  })
-
-  const updateTargetsFromDB = () => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        `select * from targets;`,
-        [],
-        (_, { rows: { _array } }) => setTargets(_array)
-      );
-    });
-  }
-
-  const addNewTargetToDB = (newTargetText, newTargetPending) => {
-    if (newTargetText === "" || newTargetText === null) {
+  const insertTarget = (title, pending) => {
+    if (title === "" || title === "") {
       return false;
     }
-    if (newTargetPending === undefined || newTargetPending === null) {
-      return false;
-    }
-    console.log(`Adding ${newTargetText} to the database`);
-
-    db.transaction(
-      (tx) => {
-        tx.executeSql("insert into targets (title, pending, completed) values (?, ?, 0)", [newTargetText, newTargetPending]);
-        tx.executeSql("select * from targets", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
-        );
-      },
-      null,
-      forceUpdate
-    );
-
-    updateTargetsFromDB();
-  }
-
-  const dropTable = () => {
-    console.log("Dropping db...");
-    db.transaction(
-      (tx) => {
-        tx.executeSql("drop table targets", []);
-        console.log("DB table drop successful");
-        tx.executeSql(
-          "create table if not exists targets (id integer primary key not null, title text, pending int, completed int);"
-        );
-      },
-      null,
-      forceUpdate
-    );
-    updateTargetsFromDB();
+    addNewTarget(title, pending)
   }
 
   return (
@@ -106,16 +29,8 @@ export default function Target() {
         onChangeText={(text) => setNewTargetText(text)}
         style={{ borderWidth: 1, width: 100 }}/>
       <Button
-        onPress={() => addNewTargetToDB(newTargetText, newTargetNumber)}
+        onPress={() => insertTarget(newTargetText, newTargetNumber)}
         title="Add a target"/>
-      <Button
-        onPress={() => dropTable()}
-        title="Clean DB"/>
     </ScrollView>
   );
-}
-
-function useForceUpdate() {
-  const [value, setValue] = useState(0);
-  return [() => setValue(value + 1), value];
 }
