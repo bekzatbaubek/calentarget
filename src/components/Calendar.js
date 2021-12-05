@@ -1,10 +1,37 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, StyleSheet, ScrollView  } from 'react-native';
+import { Text, View, TextInput, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity  } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { Button } from 'react-native-elements/dist/buttons/Button';
+
+const Todo = (props) => {
+  return (
+      <View style={styles.flexAway}>
+          <View style={styles.flexContainer}>
+              <TouchableOpacity style={styles.tickBox}></TouchableOpacity>
+              <Text style={styles.itemText}>{props.text}</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => props.whenXisClicked(props.index)}><Text style={styles.closeX}>X</Text></TouchableOpacity>
+      </View>
+  );
+}
 
 export default function CalendarScreen() {
 
   const [daysMarked, setDaysMarked] = useState();
+  const [todo, setTodo] = useState("");
+  const [todoItems, setTodoItems] = useState([]);
+
+  const addTodo = () => {
+    setTodoItems([...todoItems, todo])
+    setTodo("")
+  }
+
+  const removeTodo = (index) => {
+    let itemsCopy = [...todoItems]
+    itemsCopy.splice(index, 1)
+    setTodoItems(itemsCopy)
+  }
 
   return (
     <ScrollView style={styles.overallBackground}>
@@ -29,35 +56,51 @@ export default function CalendarScreen() {
 
         style={styles.calendarStyle}
       />
-      <View>
-        <Text style={styles.titleStyle}>ToDo List</Text>
-        <View style={styles.boxWrap}>
-          <TextInput style={styles.input} />
-        </View>
 
-        <Text style={styles.titleStyle}>Target</Text>
-        <View style={styles.boxWrap}>
-          <TextInput style={styles.input} />
+      
+        <View>
+          <Text style={styles.titleStyle}>ToDo List</Text>
+          <View style={styles.boxWrap}>
+            {/* The tasks are gonna be popped here */}
+            {
+            todoItems.map((items, index) => {
+              return <Todo key={index} text={items} index={index} whenXisClicked={removeTodo}/>
+            })
+            }
+            {/* <Todo text={'Task test Essay 1500 words INT2035 due on Thursday'} />
+            <Todo text={'Task test Essay 1500 words INT2035'} /> */}
+            
+            {/* Input a todo here */}
+            <TextInput 
+            style={styles.input}
+            placeholder={'Write something to do'}
+            onSubmitEditing={ () => addTodo() } 
+            value={todo} 
+            onChangeText={(text) => setTodo(text)}
+            />
+          </View>
+
+          <Text style={styles.titleStyle}>Target</Text>
+          <View style={styles.boxWrap}>
+            
+          </View>
+
+          <KeyboardAvoidingView
+          behavior = {Platform.OS === "ios" ? "padding" : "height"}
+          style = {styles.writeTaskWrapper}
+          >
+          </KeyboardAvoidingView>
         </View>
-      </View>
+      
+
+        
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    borderColor: '#858992',
-    padding: 10,
-    // shadowColor:'black',
-    // shadowOffset: {
-    //   width: 6,
-    //   height: 10
-    // },
-    // shadowOpacity: 80,
-    // shadowRadius: 4,
+    marginLeft: 32,
   },
 
   overallBackground: {
@@ -92,6 +135,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 20,
+    padding: 15,
 
   },
 
@@ -104,5 +148,44 @@ const styles = StyleSheet.create({
   },
   font: {
     fontFamily: 'SofiaProMedium',
-  }
+  },
+  flexContainer: {
+    display: "flex",
+    flexDirection: 'row',
+},
+
+tickBox: {
+    width: 25,
+    height: 25,
+    borderWidth: 1,
+    borderColor: "#858992"
+},
+
+itemText: {
+    fontFamily: "SofiaProRegular",
+    fontSize: 16,
+    color: "#858992",
+    lineHeight: 18,
+    paddingTop: 4,
+    paddingLeft: 5,
+    width: '85%',
+},
+
+closeX: {
+    fontFamily: "SofiaProRegular",
+    fontSize: 16,
+    color: "#858992",
+    lineHeight: 18,
+    paddingTop: 4,
+    paddingLeft: 5,
+},
+
+flexAway: {
+    display: "flex",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // maxWidth: 300,
+    marginBottom: 16,
+}
+  
 });
