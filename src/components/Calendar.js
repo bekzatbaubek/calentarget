@@ -19,18 +19,18 @@ const Todo = (props) => {
 export default function CalendarScreen() {
 
   const [daysMarked, setDaysMarked] = useState();
-  const [todo, setTodo] = useState("");
-  const [todoItems, setTodoItems] = useState([]);
+  const [newTodoItemText, setNewTodoItemText] = useState("");
+  const [todoItemsList, setTodoItemsList] = useState([]);
 
-  const addTodo = () => {
-    setTodoItems([...todoItems, todo])
+  const addTodoItemToList = () => {
+    setTodoItemsList([...todoItemsList, newTodoItemText])
     setTodo("")
   }
 
   const removeTodo = (index) => {
-    let itemsCopy = [...todoItems]
+    let itemsCopy = [...todoItemsList]
     itemsCopy.splice(index, 1)
-    setTodoItems(itemsCopy)
+    setTodoItemsList(itemsCopy)
   }
 
   return (
@@ -63,7 +63,7 @@ export default function CalendarScreen() {
           <View style={styles.boxWrap}>
             {/* The tasks are gonna be popped here */}
             {
-            todoItems.map((items, index) => {
+            todoItemsList.map((items, index) => {
               return <Todo key={index} text={items} index={index} whenXisClicked={removeTodo}/>
             })
             }
@@ -74,9 +74,9 @@ export default function CalendarScreen() {
             <TextInput 
             style={styles.input}
             placeholder={'Write something to do'}
-            onSubmitEditing={ () => addTodo() } 
-            value={todo} 
-            onChangeText={(text) => setTodo(text)}
+            onSubmitEditing={ () => addTodoItemToList() } 
+            value={newTodoItemText} 
+            onChangeText={(text) => setNewTodoItemText(text)}
             />
           </View>
 
