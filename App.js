@@ -17,13 +17,17 @@ export default function App() {
     SofiaProSemiBold: require('./assets/fonts/SofiaProSemiBold.ttf'),
   });
 
-  if (!loaded || !isDBLoadingComplete) {
+  if (!loaded) {
+    return null;
+  }
+
+  if (!isDBLoadingComplete) {
     return null;
   }
 
   return (
     <SafeAreaProvider>
-      <TargetsContextProvider>
+      <TargetsContextProvider targets={[]}>
         <NavigationContainer theme={MyTheme}>
           <Tabs />
         </NavigationContainer>
