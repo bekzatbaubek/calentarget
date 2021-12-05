@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Text,
   View,
   TextInput,
@@ -8,6 +8,7 @@ import { Text,
   Platform,
   TouchableOpacity  } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { TodosContext } from '../contexts/TodosContext';
 
 const Todo = (props) => {
   return (
@@ -17,7 +18,7 @@ const Todo = (props) => {
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
       <TouchableOpacity 
-        onPress={() => props.whenXisClicked(props.index)}>
+        onPress={() => props.whenXisClicked(props.id)}>
           <Text style={styles.closeX}>X</Text>
       </TouchableOpacity>
     </View>
@@ -33,18 +34,22 @@ export default function CalendarScreen() {
 
   const [daysMarked, setDaysMarked] = useState();
   const [newTodoItemText, setNewTodoItemText] = useState("");
-  const [todoItemsList, setTodoItemsList] = useState([]);
   const todayInISOString = formattedToday();
+  const { todos, addNewTodo } = useContext(TodosContext);
 
   const addTodoItemToList = () => {
-    setTodoItemsList([...todoItemsList, newTodoItemText]);
+
+    if (newTodoItemText === null || newTodoItemText === ""){
+      return false;
+    }
+
+    addNewTodo(newTodoItemText, todayInISOString);
+    console.log(todos);
     setNewTodoItemText("");
   }
 
-  const removeTodo = (index) => {
-    let itemsCopy = [...todoItemsList];
-    itemsCopy.splice(index, 1);
-    setTodoItemsList(itemsCopy);
+  const removeTodo = (id) => {
+    console.log(`Removing todo item with id ${id}`);
   }
 
   return (
@@ -67,8 +72,8 @@ export default function CalendarScreen() {
       <View>
         <Text style={styles.titleStyle}>ToDo List</Text>
         <View style={styles.boxWrap}>
-          { todoItemsList.map((items, index) => {
-            return <Todo key={index} text={items} index={index} whenXisClicked={removeTodo}/>
+          { todos.map((todoItem, index) => {
+            return <Todo key={index} text={todoItem.title} id={todoItem.id} whenXisClicked={removeTodo}/>
           }) }
           <TextInput 
             style={styles.input}

@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import useDatabase from './src/hooks/useDatabase';
 import { TargetsContextProvider } from './src/contexts/TargetsContext';
+import { TodosContextProvider } from './src/contexts/TodosContext';
 
 export default function App() {
 
@@ -17,21 +18,19 @@ export default function App() {
     SofiaProSemiBold: require('./assets/fonts/SofiaProSemiBold.ttf'),
   });
 
-  if (!loaded) {
-    return null;
-  }
-
-  if (!isDBLoadingComplete) {
+  if (!loaded && !isDBLoadingComplete) {
     return null;
   }
 
   return (
     <SafeAreaProvider>
       <TargetsContextProvider targets={[]}>
-        <NavigationContainer theme={MyTheme}>
-          <Tabs />
-        </NavigationContainer>
-        <StatusBar/>
+        <TodosContextProvider todos={[]}>
+          <NavigationContainer theme={MyTheme}>
+            <Tabs />
+          </NavigationContainer>
+          <StatusBar/>
+        </TodosContextProvider>
       </TargetsContextProvider>
     </SafeAreaProvider>
   );

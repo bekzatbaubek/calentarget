@@ -20,6 +20,22 @@ const getTargets = (setTargetsFunc) => {
   );
 }
 
+const getTodos = (setTodosFunc) => {
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        'select * from todos',
+        [],
+        (_, { rows: { _array } }) => {
+          setTodosFunc(_array)
+        }
+      );
+    },
+    (t, error) => { console.log("db error load todos"); console.log(error) },
+    (_t, _success) => { console.log("loaded todos")}
+  );
+}
+
 const insertTarget = (title, pending, successFunc) => {
   db.transaction( tx => {
       tx.executeSql( 'insert into targets (title, pending, completed) values (?, ?, 0)', [title, pending] );
@@ -29,18 +45,25 @@ const insertTarget = (title, pending, successFunc) => {
   )
 }
 
+const insertTodo = (title, createdDate, successFunc) => {
+  db.transaction( tx => {
+      tx.executeSql( 'insert into todos (title, createdDate, completed) values (?, ?, 0)', [title, createdDate] );
+    },
+    (t, error) => { console.log("db error insertTodo"); console.log(error);},
+    (t, success) => { successFunc() }
+  )
+}
+
 const dropDatabaseTablesAsync = async () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
-      tx.executeSql(
-        'drop table targets',
-        [],
+        tx.executeSql('drop table targets');
+        tx.executeSql('drop table todos');
+        },
         (_, result) => { resolve(result) },
-        (_, error) => { console.log("error dropping targets table"); reject(error)
-        }
+        (_, error) => { console.log("error dropping targets table: " + error); reject(error) },
       )
     })
-  })
 }
 
 const setupDatabaseAsync = async () => {
@@ -48,6 +71,9 @@ const setupDatabaseAsync = async () => {
     db.transaction(tx => {
         tx.executeSql(
           "create table if not exists targets (id integer primary key not null, title text, pending int, completed int);"
+        );
+        tx.executeSql(
+          "create table if not exists todos (id integer primary key not null, title text, createdDate text, completed int);"
         );
       },
       (_, error) => { console.log("db error creating tables"); console.log(error); reject(error) },
@@ -60,6 +86,8 @@ const setupDatabaseAsync = async () => {
 export const database = {
   getTargets,
   insertTarget,
+  getTodos,
+  insertTodo,
   setupDatabaseAsync,
   dropDatabaseTablesAsync,
 }
