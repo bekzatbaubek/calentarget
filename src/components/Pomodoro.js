@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Text, Button, Dimensions, View } from 'react-native';
-import { StyleSheet } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
-import { TargetsContext } from '../contexts/TargetsContext'
+import { TargetsContext } from '../contexts/TargetsContext';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -13,11 +12,37 @@ const strokeWidth = 50;
 const radius = (size - strokeWidth) / 2;
 const circumference = 2 * Math.PI * radius;
 
-const singleTarget = (target, index) => {
-  return <View key={index}>
-    <Text style={{ fontFamily: 'SofiaProRegular', fontSize: 32 }}>{target.title}</Text>
-    <Text style={{ fontSize: 32 }}>{"🎓".repeat(target.pending)}</Text>
-  </View>
+const CircularProgress = ({animatedProps}) => {
+  return <View>
+  <Svg width={size} height={size}>
+    <Circle
+      stroke="#413245"
+      fill="none"
+      cx={size / 2}
+      cy={size / 2}
+      r={radius}
+      strokeWidth={20}
+    />
+    <AnimatedCircle
+      stroke="#598741"
+      fill="none"
+      cx={size / 2}
+      cy={size / 2}
+      r={radius}
+      strokeWidth={15}
+      strokeDasharray={circumference}
+      animatedProps={animatedProps}
+    />
+  </Svg>
+</View>
+}
+
+const formatTime = (seconds) => {
+  let minutes = Math.floor(seconds / 60);
+  let remainingSeconds = seconds % 60;
+  let minuteString = minutes >= 10 ? minutes : '0' + minutes;
+  let secondsString = remainingSeconds >= 10 ? remainingSeconds : '0' + remainingSeconds;
+  return minuteString + ':' + secondsString;
 }
 
 export default function Pomodoro() {
@@ -56,28 +81,27 @@ export default function Pomodoro() {
     progress.value = 0;
   }
 
+  const startPomodoroTimer = () => {
+    startTimer();
+    startAnimation();
+    setPMButtonText("Pause");
+  }
+
+  const stopPomodoroTimer = () => {
+    stopTimer();
+    cancelAnimation(progress);
+    setPMButtonText("Start");
+  }
+
   const togglePomodoroTimer = () => {
     setIsRunning(!isRunning);
-    if (!isRunning) {
-      startTimer();
-      startAnimation();
-      setPMButtonText("Pause");
+    if (isRunning) {
+      stopPomodoroTimer();
     }
     else {
-      stopTimer();
-      cancelAnimation(progress);
-      setPMButtonText("Start");
+      startPomodoroTimer();
     }
-    console.log("Clicked on pomodoro start: is the timer running: " + isRunning);
   };
-
-  const formatTime = (seconds) => {
-    let minutes = Math.floor(seconds / 60);
-    let remainingSeconds = seconds % 60;
-    let minuteString = minutes >= 10 ? minutes : '0' + minutes;
-    let secondsString = remainingSeconds >= 10 ? remainingSeconds : '0' + remainingSeconds;
-    return minuteString + ':' + secondsString;
-  }
 
   const progress = useSharedValue(0);
 
@@ -92,45 +116,10 @@ export default function Pomodoro() {
   });
 
   return (
-    <View style={ styles.position } >
-      <View>
-        <Svg width={size} height={size}>
-          <Circle
-            stroke="#413245"
-            fill="none"
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            {...{ strokeWidth }}
-          />
-          <AnimatedCircle
-            stroke="#598741"
-            fill="none"
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            strokeWidth={15}
-            strokeDasharray={circumference}
-            animatedProps={animatedProps}
-          />
-        </Svg>
-      </View>
-      <Text style={ styles.banner }>Pomodoro Screen</Text>
+    <View>
+      <CircularProgress animatedProps={animatedProps}/>
       <Text>{formatTime(secondsLeftRef.current)}</Text>
-      <Button onPress={togglePomodoroTimer} title={pomodoroButtonText}/>
-      {targets.map((target, index) => singleTarget(target, index))}
+      <Button onPress={() => togglePomodoroTimer()} title={pomodoroButtonText}/>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  banner: {
-    color: 'red'
-  },
-
-  position: {
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center',
-  }
-})
