@@ -32,10 +32,10 @@ const formattedToday = () => {
 
 export default function CalendarScreen() {
 
-  const [daysMarked, setDaysMarked] = useState();
-  const [newTodoItemText, setNewTodoItemText] = useState("");
   const todayInISOString = formattedToday();
-  const { todos, addNewTodo } = useContext(TodosContext);
+  const [selectedDay, setSelectedDay] = useState(todayInISOString);
+  const [newTodoItemText, setNewTodoItemText] = useState("");
+  const { todos, addNewTodo, removeTodo } = useContext(TodosContext);
 
   const addTodoItemToList = () => {
 
@@ -43,23 +43,25 @@ export default function CalendarScreen() {
       return false;
     }
 
-    addNewTodo(newTodoItemText, todayInISOString);
-    console.log(todos);
+    addNewTodo(newTodoItemText, selectedDay);
     setNewTodoItemText("");
   }
 
-  const removeTodo = (id) => {
+  const deleteTodo = (id) => {
     console.log(`Removing todo item with id ${id}`);
+    removeTodo(id);
   }
 
   return (
     <ScrollView style={styles.overallBackground}>
       <Calendar
         onDayPress={(day) => {
-          const selectedDay = { [day.dateString]: {selected: true, selectedColor: '#FE724C'} }
-          setDaysMarked({...selectedDay});
+          setSelectedDay(day.dateString);
+          console.log(selectedDay);
         }}
-        markedDates={daysMarked}
+        markedDates={
+          {[selectedDay]: {selected: true, selectedColor: '#FE724C'}}
+        }
         theme={{
           arrowColor: '#FE724C',
           monthTextColor: '#323643',
@@ -72,12 +74,12 @@ export default function CalendarScreen() {
       <View>
         <Text style={styles.titleStyle}>ToDo List</Text>
         <View style={styles.boxWrap}>
-          { todos.map((todoItem, index) => {
-            return <Todo key={index} text={todoItem.title} id={todoItem.id} whenXisClicked={removeTodo}/>
+          { todos.filter(todoItem => todoItem.createdDate === selectedDay).map((todoItem, index) => {
+            return <Todo key={index} text={todoItem.title} id={todoItem.id} whenXisClicked={deleteTodo}/>
           }) }
           <TextInput 
             style={styles.input}
-            placeholder={'Write something to do'}
+            placeholder={'✍ Write something to do'}
             onSubmitEditing={ () => addTodoItemToList() } 
             value={newTodoItemText} 
             onChangeText={(text) => setNewTodoItemText(text)}
@@ -96,6 +98,8 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   input: {
     marginLeft: 32,
+    paddingBottom: 8,
+    borderBottomWidth: 1
   },
 
   overallBackground: {
