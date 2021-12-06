@@ -47,7 +47,7 @@ const formatTime = (seconds) => {
 
 export default function Pomodoro() {
 
-  const { targets } = useContext(TargetsContext);
+  const { targetForPomodoro } = useContext(TargetsContext);
   const pomodoroPeriodInSeconds = 10;
   const [secondsLeft, setSecondsLeft] = useState(pomodoroPeriodInSeconds);
   const [timer, setTimer] = useState();
@@ -118,6 +118,7 @@ export default function Pomodoro() {
   return (
     <View>
       <CircularProgress animatedProps={animatedProps}/>
+      <Text>{(targetForPomodoro === null || targetForPomodoro === undefined) ? "Select target" : targetForPomodoro.title}</Text>
       <Text>{formatTime(secondsLeftRef.current)}</Text>
       <Button onPress={() => togglePomodoroTimer()} title={pomodoroButtonText}/>
     </View>

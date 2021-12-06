@@ -15,6 +15,7 @@ export const TargetsContextProvider = props => {
 
   // Use State to store the values
   const [targets, setTargets] = useState(initialTargets);
+  const [targetForPomodoro, setTargetForPM] = useState(null);
 
   useEffect(() => {
     refreshTargets()
@@ -28,10 +29,16 @@ export const TargetsContextProvider = props => {
     return database.getTargets(setTargets)
   }
 
+  const selectTargetForPomodoro = (target) => {
+    setTargetForPM(target);
+  }
+
   // Make the context object:
   const targetsContext = {
     targets,
-    addNewTarget
+    addNewTarget,
+    targetForPomodoro,
+    selectTargetForPomodoro,
   };
 
   // pass the value in provider and return
