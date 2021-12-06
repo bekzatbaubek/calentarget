@@ -107,9 +107,10 @@ export default function CalendarScreen() {
 
 const styles = StyleSheet.create({
   input: {
-    marginLeft: 32,
-    paddingBottom: 8,
-    borderBottomWidth: 1
+    marginHorizontal: 15,
+    paddingBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#D7D7D7"
   },
 
   overallBackground: {
