@@ -28,6 +28,10 @@ export const TodosContextProvider = props => {
     return database.deleteTodo(id, refreshTodos)
   }
 
+  const markTodo = (id) => {
+    return database.completeTodo(id, refreshTodos)
+  }
+
   const refreshTodos = () =>  {
     return database.getTodos(setTodos)
   }
@@ -36,6 +40,7 @@ export const TodosContextProvider = props => {
   const todosContext = {
     todos,
     removeTodo,
+    markTodo,
     addNewTodo
   };
 

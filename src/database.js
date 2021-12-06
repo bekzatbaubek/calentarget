@@ -63,6 +63,15 @@ const deleteTodo = (id, successFunc) => {
   )
 }
 
+const completeTodo = (id, successFunc) => {
+  db.transaction( tx => {
+    tx.executeSql( 'update todos set completed=1 where id=?', [id] );
+  },
+  (t, error) => { console.log("db error completeTodo"); console.log(error);},
+  (t, success) => { successFunc() }
+)
+}
+
 const dropDatabaseTablesAsync = async () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -98,6 +107,7 @@ export const database = {
   getTodos,
   insertTodo,
   deleteTodo,
+  completeTodo,
   setupDatabaseAsync,
   dropDatabaseTablesAsync,
 }

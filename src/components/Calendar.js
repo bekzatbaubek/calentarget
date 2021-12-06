@@ -14,7 +14,7 @@ const Todo = (props) => {
   return (
     <View style={styles.flexAway}>
       <View style={styles.flexContainer}>
-        <TouchableOpacity style={styles.tickBox}></TouchableOpacity>
+        <TouchableOpacity style={styles.tickBox} onPress={() => props.whenTicked(props.id)}/>
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
       <TouchableOpacity 
@@ -35,7 +35,7 @@ export default function CalendarScreen() {
   const todayInISOString = formattedToday();
   const [selectedDay, setSelectedDay] = useState(todayInISOString);
   const [newTodoItemText, setNewTodoItemText] = useState("");
-  const { todos, addNewTodo, removeTodo } = useContext(TodosContext);
+  const { todos, addNewTodo, removeTodo, markTodo } = useContext(TodosContext);
 
   const addTodoItemToList = () => {
 
@@ -50,6 +50,11 @@ export default function CalendarScreen() {
   const deleteTodo = (id) => {
     console.log(`Removing todo item with id ${id}`);
     removeTodo(id);
+  }
+
+  const completeTodo = (id) => {
+    console.log(`Completing todo item with id ${id}`);
+    markTodo(id);
   }
 
   return (
@@ -74,8 +79,13 @@ export default function CalendarScreen() {
       <View>
         <Text style={styles.titleStyle}>ToDo List</Text>
         <View style={styles.boxWrap}>
-          { todos.filter(todoItem => todoItem.createdDate === selectedDay).map((todoItem, index) => {
-            return <Todo key={index} text={todoItem.title} id={todoItem.id} whenXisClicked={deleteTodo}/>
+          { todos.filter(todoItem => todoItem.completed === 0).filter(todoItem => todoItem.createdDate === selectedDay).map((todoItem, index) => {
+            return <Todo 
+              key={index} 
+              text={todoItem.title} 
+              id={todoItem.id} 
+              whenXisClicked={deleteTodo}
+              whenTicked={completeTodo}/>
           }) }
           <TextInput 
             style={styles.input}
@@ -168,6 +178,18 @@ itemText: {
     paddingTop: 4,
     paddingLeft: 5,
     width: '85%',
+},
+
+completedItemText: {
+  fontFamily: "SofiaProRegular",
+  fontSize: 16,
+  color: "#858992",
+  lineHeight: 18,
+  paddingTop: 4,
+  paddingLeft: 5,
+  width: '85%',
+  textDecorationLine: 'line-through',
+  textDecorationStyle: 'solid'
 },
 
 closeX: {
