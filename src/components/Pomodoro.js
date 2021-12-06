@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
-import { Text, Button, Dimensions, View, Alert, StyleSheet } from 'react-native';
+import { Text, Button, Dimensions, View, Alert, StyleSheet, S, ScrollView, TouchableOpacity } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { TargetsContext } from '../contexts/TargetsContext';
@@ -16,19 +16,19 @@ const CircularProgress = ({animatedProps}) => {
   return <View>
   <Svg width={size} height={size}>
     <Circle
-      stroke="#413245"
-      fill="none"
+      stroke="#EDECEF"
+      fill="#FFFFFF"
       cx={size / 2}
       cy={size / 2}
       r={radius}
       strokeWidth={20}
     />
     <AnimatedCircle
-      stroke="#598741"
+      stroke="#FDC0AF"
       fill="none"
       cx={size / 2}
       cy={size / 2}
-      r={radius}
+      r={radius - 17}
       strokeWidth={15}
       strokeDasharray={circumference}
       animatedProps={animatedProps}
@@ -37,11 +37,14 @@ const CircularProgress = ({animatedProps}) => {
 </View>
 }
 
-const PomodoroControls = ({timeString, pmBtnText, toggle, reset}) => {
-  return <View>
-    <Text style={styles.timeStamp}>{timeString}</Text>
-    <Button title={pmBtnText} onPress={() => toggle()}/>
-    <Button title="Reset" onPress={() => reset()}/>
+const PomodoroControls = ({pmBtnText, toggle, reset}) => {
+  return <View style={{display:"flex", flexDirection: "row", justifyContent:"space-evenly", width:400, marginTop: 50}}>
+    <TouchableOpacity style={styles.button} onPress={() => toggle()}>
+      <Text style={{fontFamily:"SofiaProMedium", color: "white", fontSize: 16,}}>{pmBtnText}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.button} onPress={() => reset()}>
+      <Text style={{fontFamily:"SofiaProMedium", color: "white", fontSize: 16,}}>Reset</Text>
+    </TouchableOpacity>
   </View>
 }
 
@@ -51,10 +54,12 @@ const SelectedTargetOverview = (props) => {
   }
   else {
     return <View style={styles.pomodoroControl}>
-      <Text>{props.targetForPM.title}</Text>
-      <Text>{"🎓".repeat(props.targetForPM.pending)}</Text>
-      <PomodoroControls 
-        timeString={props.timeString}
+      <View style={styles.targetTitle}>
+        <Text style={styles.pomodoIcons}>{"🎓".repeat(props.targetForPM.pending)}</Text>
+        <Text style={{fontSize: 20, fontFamily: "SofiaProRegular", color:"#A6A6A8"}}>Work on:</Text>
+        <Text style={{fontSize: 20, fontFamily: "SofiaProRegular", color:"#A6A6A8"}}>{props.targetForPM.title}</Text>
+      </View>
+      <PomodoroControls
         pmBtnText={props.pmBtnText}
         toggle={props.toggle}
         reset={props.reset}/>
@@ -73,7 +78,7 @@ const formatTime = (seconds) => {
 export default function Pomodoro() {
 
   const { targetForPomodoro, updateTarget } = useContext(TargetsContext);
-  const pomodoroPeriodInSeconds = 3;
+  const pomodoroPeriodInSeconds = 25 * 60;
   const [secondsLeft, setSecondsLeft] = useState(pomodoroPeriodInSeconds);
   const [timer, setTimer] = useState();
   const [isRunning, setIsRunning] = useState(false);
@@ -158,15 +163,17 @@ export default function Pomodoro() {
   });
 
   return (
+    <ScrollView style={{ backgroundColor: 'white'}}>
     <View style= {styles.pomodoroContainer}>
       <CircularProgress animatedProps={animatedProps} />
+      <Text style={styles.timeStamp}>{formatTime(secondsLeftRef.current)}</Text>
       <SelectedTargetOverview 
         toggle={togglePomodoroTimer}
         reset={resetPomodoroTimer}
         pmBtnText={pomodoroButtonText}
-        timeString={formatTime(secondsLeftRef.current)}
         targetForPM={targetForPomodoro}/>
     </View>
+    </ScrollView>
   );
 }
 
@@ -177,6 +184,33 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   timeStamp: {
+    fontFamily: 'SofiaProSemiBold',
+    fontSize: 44,
+    position: "relative",
+    zIndex: 100,
+    top: -1 * (radius + strokeWidth + 10),
+    color: "#646B82"
+    
+  },
+  targetTitle: {
+    display: "flex",
+    alignItems: "center"
+  },
+  pomodoIcons: {
+    fontSize: 44
+  },
+  button: {
+    fontFamily: "SofiaProSemiBold",
+    backgroundColor: "#FE724C",
+    paddingVertical: 15,
+    paddingHorizontal: 45,
+    marginBottom: 50,
+    borderRadius: 28,
+    shadowColor: '#989799',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 20,
     
   }
 
