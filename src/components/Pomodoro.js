@@ -52,6 +52,7 @@ const SelectedTargetOverview = (props) => {
   else {
     return <View>
       <Text>{props.targetForPM.title}</Text>
+      <Text>{"🎓".repeat(props.targetForPM.pending)}</Text>
       <PomodoroControls 
         timeString={props.timeString}
         pmBtnText={props.pmBtnText}
@@ -71,8 +72,8 @@ const formatTime = (seconds) => {
 
 export default function Pomodoro() {
 
-  const { targetForPomodoro } = useContext(TargetsContext);
-  const pomodoroPeriodInSeconds = 10;
+  const { targetForPomodoro, updateTarget } = useContext(TargetsContext);
+  const pomodoroPeriodInSeconds = 3;
   const [secondsLeft, setSecondsLeft] = useState(pomodoroPeriodInSeconds);
   const [timer, setTimer] = useState();
   const [isRunning, setIsRunning] = useState(false);
@@ -88,6 +89,7 @@ export default function Pomodoro() {
       if (secondsLeftRef.current === 0) {
         clearInterval(newTimer);
         finishedPomodoroPeriod();
+        updateTarget(targetForPomodoro.id, targetForPomodoro.pending - 1);
         cleanUpAfterPeriod();
       }
     }, 1000);

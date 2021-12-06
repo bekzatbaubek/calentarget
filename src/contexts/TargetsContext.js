@@ -25,7 +25,16 @@ export const TargetsContextProvider = props => {
     return database.insertTarget(title, pending, refreshTargets)
   };
 
+  const updateTarget = (id, newPending) => {
+    return database.completeTarget(id, newPending, refreshTargets);
+  }
+
+  const refreshSelectedTarget = (id) => {
+    setTargetForPM(targets.find(elem => elem.id === id))
+  }
+
   const refreshTargets = () =>  {
+    refreshSelectedTarget();
     return database.getTargets(setTargets)
   }
 
@@ -39,6 +48,7 @@ export const TargetsContextProvider = props => {
     addNewTarget,
     targetForPomodoro,
     selectTargetForPomodoro,
+    updateTarget,
   };
 
   // pass the value in provider and return

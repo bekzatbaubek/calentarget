@@ -45,6 +45,15 @@ const insertTarget = (title, pending, successFunc) => {
   )
 }
 
+const completeTarget = (id, newPending, successFunc) => {
+  db.transaction( tx => {
+    tx.executeSql( 'update targets set pending=? where id=?', [newPending, id] );
+  },
+  (t, error) => { console.log("db error completeTarget"); console.log(error);},
+  (t, success) => { successFunc() }
+)
+}
+
 const insertTodo = (title, createdDate, successFunc) => {
   db.transaction( tx => {
       tx.executeSql( 'insert into todos (title, createdDate, completed) values (?, ?, 0)', [title, createdDate] );
@@ -104,6 +113,7 @@ const setupDatabaseAsync = async () => {
 export const database = {
   getTargets,
   insertTarget,
+  completeTarget,
   getTodos,
   insertTodo,
   deleteTodo,

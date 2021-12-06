@@ -21,13 +21,15 @@ export default function Target() {
     if (title === "" || title === "") {
       return false;
     }
-    addNewTarget(title, pending)
+    addNewTarget(title, pending);
+    setNewTargetText("");
   }
 
   return (
     <ScrollView>
-      {targets.map((target, index) => singleTarget(target, index))}
+      {targets.filter(target => target.pending > 0).map((target, index) => singleTarget(target, index))}
       <TextInput
+        value={newTargetText}
         onChangeText={(text) => setNewTargetText(text)}
         style={{ borderWidth: 1, width: 100 }}/>
       <Button
