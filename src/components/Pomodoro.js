@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
-import { Text, Button, Dimensions, View, Alert } from 'react-native';
+import { Text, Button, Dimensions, View, Alert, StyleSheet } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { TargetsContext } from '../contexts/TargetsContext';
@@ -39,7 +39,7 @@ const CircularProgress = ({animatedProps}) => {
 
 const PomodoroControls = ({timeString, pmBtnText, toggle, reset}) => {
   return <View>
-    <Text>{timeString}</Text>
+    <Text style={styles.timeStamp}>{timeString}</Text>
     <Button title={pmBtnText} onPress={() => toggle()}/>
     <Button title="Reset" onPress={() => reset()}/>
   </View>
@@ -50,7 +50,7 @@ const SelectedTargetOverview = (props) => {
     return <Text>Select target</Text>
   }
   else {
-    return <View>
+    return <View style={styles.pomodoroControl}>
       <Text>{props.targetForPM.title}</Text>
       <Text>{"🎓".repeat(props.targetForPM.pending)}</Text>
       <PomodoroControls 
@@ -158,8 +158,8 @@ export default function Pomodoro() {
   });
 
   return (
-    <View>
-      <CircularProgress animatedProps={animatedProps}/>
+    <View style= {styles.pomodoroContainer}>
+      <CircularProgress animatedProps={animatedProps} />
       <SelectedTargetOverview 
         toggle={togglePomodoroTimer}
         reset={resetPomodoroTimer}
@@ -169,3 +169,15 @@ export default function Pomodoro() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pomodoroContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  timeStamp: {
+    
+  }
+
+})
