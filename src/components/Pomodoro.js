@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
-import { Text, Button, Dimensions, View } from 'react-native';
+import { Text, Button, Dimensions, View, Alert } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { TargetsContext } from '../contexts/TargetsContext';
@@ -37,6 +37,30 @@ const CircularProgress = ({animatedProps}) => {
 </View>
 }
 
+const PomodoroControls = ({timeString, pmBtnText, toggle, reset}) => {
+  return <View>
+    <Text>{timeString}</Text>
+    <Button title={pmBtnText} onPress={() => toggle()}/>
+    <Button title="Reset" onPress={() => reset()}/>
+  </View>
+}
+
+const SelectedTargetOverview = (props) => {
+  if (props.targetForPM === null || props.targetForPM === undefined) {
+    return <Text>Select target</Text>
+  }
+  else {
+    return <View>
+      <Text>{props.targetForPM.title}</Text>
+      <PomodoroControls 
+        timeString={props.timeString}
+        pmBtnText={props.pmBtnText}
+        toggle={props.toggle}
+        reset={props.reset}/>
+    </View>
+  }
+}
+
 const formatTime = (seconds) => {
   let minutes = Math.floor(seconds / 60);
   let remainingSeconds = seconds % 60;
@@ -63,11 +87,21 @@ export default function Pomodoro() {
       setSecondsLeft(secondsLeftRef.current);
       if (secondsLeftRef.current === 0) {
         clearInterval(newTimer);
+        finishedPomodoroPeriod();
         cleanUpAfterPeriod();
       }
     }, 1000);
     setTimer(newTimer);
   };
+
+  const finishedPomodoroPeriod = () => {
+    Alert.alert(
+      "Congratulations! 🎉",
+      `${targetForPomodoro.title} Target achieved`,
+      [
+        { text: "OK", onPress: () => console.log("OK Pressed") }
+      ])
+  }
 
   const stopTimer = () => {
     clearInterval(timer);
@@ -91,6 +125,12 @@ export default function Pomodoro() {
     stopTimer();
     cancelAnimation(progress);
     setPMButtonText("Start");
+  }
+
+  const resetPomodoroTimer = () => {
+    stopPomodoroTimer();
+    setIsRunning(false);
+    cleanUpAfterPeriod();
   }
 
   const togglePomodoroTimer = () => {
@@ -118,9 +158,12 @@ export default function Pomodoro() {
   return (
     <View>
       <CircularProgress animatedProps={animatedProps}/>
-      <Text>{(targetForPomodoro === null || targetForPomodoro === undefined) ? "Select target" : targetForPomodoro.title}</Text>
-      <Text>{formatTime(secondsLeftRef.current)}</Text>
-      <Button onPress={() => togglePomodoroTimer()} title={pomodoroButtonText}/>
+      <SelectedTargetOverview 
+        toggle={togglePomodoroTimer}
+        reset={resetPomodoroTimer}
+        pmBtnText={pomodoroButtonText}
+        timeString={formatTime(secondsLeftRef.current)}
+        targetForPM={targetForPomodoro}/>
     </View>
   );
 }
