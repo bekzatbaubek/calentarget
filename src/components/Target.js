@@ -28,6 +28,7 @@ export default function Target() {
   return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         <View style={{flex: 5, paddingTop: 20}}>
+          <Text style={styles.titleStyle}>My Targets</Text>
           {targets.filter(target => target.pending > 0).map((target, index) => singleTarget(target, index))}
           <TextInput
             value={newTargetText}
@@ -70,7 +71,14 @@ const styles = StyleSheet.create({
   singleTarget: {
     marginHorizontal: 15,
     marginBottom: 5,
-  }
+  },
+  titleStyle: {
+    marginLeft: 15,
+    fontWeight: "600",
+    fontSize: 28,
+    fontFamily: 'SofiaProSemiBold',
+    marginBottom: 20,
+  },
 
 })
 

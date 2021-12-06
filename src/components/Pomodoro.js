@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useContext } from 'react';
 import { Text, Button, Dimensions, View, Alert, StyleSheet, S, ScrollView, TouchableOpacity } from 'react-native';
 import Animated, { cancelAnimation, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Easing } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { TargetsContext } from '../contexts/TargetsContext';
 
